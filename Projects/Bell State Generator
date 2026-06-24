@@ -1,0 +1,37 @@
+from qiskit import*
+from qiskit.quantum_info import*
+from qiskit.visualization import*
+
+print('Enter start state (00,01,10,11):')
+start = input()
+valid_values = ["00", "01", "10", "11"]
+
+if start not in valid_values:
+    print("Value is invalid")
+    sys.exit()
+    
+BSgenerator = QuantumCircuit(2)
+
+BSgenerator.h(0)
+if start=="00":
+    ket_in = Statevector([1,0,0,0])
+    BSgenerator.cx(0,1)
+if start=="01":
+    ket_in = Statevector([0,1,0,0])
+    BSgenerator.z(0)
+    BSgenerator.cx(0,1)
+if start=="10":
+    ket_in = Statevector([0,0,1,0])
+    BSgenerator.x(1)
+    BSgenerator.cx(0,1)
+if start=="11":
+    ket_in = Statevector([0,0,0,1])
+    BSgenerator.x(1)
+    BSgenerator.z(1)
+    BSgenerator.cx(0,1)
+
+display(BSgenerator.draw(output="mpl"))
+
+ket_out = ket_in.evolve(BSgenerator)
+statistics = v.sample_counts(1000)
+plot_histogram(statistics)
